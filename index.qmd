@@ -1,0 +1,248 @@
+---
+title: "Estimating the Determinants of Health Literacy for Policy Prioritisation"
+# : A Local Level Case Study in Newham, London
+author: "Nathan Green"
+institute: "Department of Statistical Science, UCL"
+format:
+  revealjs:
+    show-slide-number: all
+    incremental: true
+    footer: "Nathan Green | UCL | n.green@ucl.ac.uk"
+    slide-number: 'c/t' # Enables page numbers (can be 'true', 'c', 'c/t', 'h.v')
+    # theme: [default, custom.scss]
+    theme: [default, ucl-theme.scss]
+    # css : styles.css
+    self-contained: true
+     # Include JavaScript to dynamically add the bars to the document body
+    include-in-header:
+      - text: |
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              // Top Bar
+              const topBar = document.createElement('div');
+              topBar.className = 'top-bar';
+              topBar.innerHTML = '<img src="ucl_logo.svg" alt="UCL Logo" class="ucl-logo"><span class="presentation-title">Determinants of Health Literacy</span><span class="author-info"></span>';
+              document.body.appendChild(topBar);
+
+              // Initial update for the first slide
+              const initialSlideNumberElement = bottomBar.querySelector('.slide-number-display');
+              if (initialSlideNumberElement) {
+                  setTimeout(() => { // Small delay to ensure Reveal.js is ready
+                      initialSlideNumberElement.textContent = `1 / ${Reveal.getTotalSlides()}`;
+                  }, 100);
+              }
+            });
+          </script>
+filters:
+  - emoji-filter.lua
+editor: visual
+smaller: true
+progress: true
+bibliography: mybib.bib
+---
+
+```{=html}
+<style>
+.reveal .sourceCode pre,
+.reveal .sourceCode code,
+.reveal pre code {
+  font-size: 0.6em; /* Adjust as needed */
+}
+</style>
+```
+
+<!-- type 's' for speaker view -->
+
+## Outline
+
+-   Background
+-   Problems
+-   Solutions
+    * Multilevel regression and post-stratification (MRP)
+    * Predictive comparisons
+    * Prioritisation with SUCRA
+-   Main results
+-   Sensitivity analysis
+-   Conclusion
+
+:::: fragment
+::: callout-note
+## Resources
+
+Slides and code here: `github.com/n8thangreen/data-science-in-health-talk`
+:::
+::::
+
+::: notes
+Remember to introduce myself and the topic here.
+:::
+
+<!-- ##  -->
+
+<!-- ::: panel-tabset -->
+
+<!-- ## Tab 1 -->
+
+<!-- Content for Tab 1. -->
+
+<!-- ## Tab 2 -->
+
+<!-- Content for Tab 2. -->
+
+<!-- ::: -->
+
+## Background
+
+- [Health literacy]{style="color: blue;"} is broadly defined as the ability to access, understand, appraise, and communicate health information, enabling individuals to engage in healthcare and maintain good health throughout their lives.
+
+- [UCL Public Policy Fellowship]{style="color: blue;"}
+
+##
+
+- Focusses on [Newham]{style="color: blue;"}, a diverse borough in East London that faces unique challenges
+- Identified as having some of the lowest levels of health literacy in the UK by University of Southampton (https://healthliteracy.geodata.uk/)
+
+::::: columns
+::: {.column width="50%"}
+![](health-literacy-map.png)
+:::
+
+::: {.column width="50%"}
+![](health-literacy-graph.png)
+:::
+:::::
+
+## Previous method: Synthetic estimation
+
+- Weighted Logistic Regression with Synthetic Estimation (@laursen2016developing)
+    - Frequentist single-level regression with poststratification
+- Used in geography (@gonzalez1973use; @rao2015small)
+- Can be viewed as the simpler predecessor to MRP
+    - Ignores any unique local factors
+    - MRP includes shrinkage via random effects
+- A linear model can be thought of equivalent to [Regression-Synthetic Estimator at Unit Level]{style="color: blue;"}
+    - Like Simulated Treatment Comparison in HTA
+- [Residual-adjusted synthetic estimation]{style="color: blue;"} similar to [Targeted Maximum Likelihood Estimation (TMLE)]{style="color: blue;"} in causal inference
+
+
+## Problem
+
+::::: columns
+::: {.column width="50%"}
+- What are the 'drivers' of health literacy, [specific]{style="color: blue;"} to Newham?
+- Can we [quantify]{style="color: blue;"} them?
+- What would happen to health literacy if we were to [intervene]{style="color: blue;"} to effect one of these?
+:::
+
+::: {.column width="50%"}
+-   Pass kernel / root of distribution name
+
+:::
+:::::
+
+## Data
+
+- Newham Residents Survey 2023 (NRS)
+
+- Skills for Life Survey 2011
+
+- Additional data
+    - Labour Force Survey (LFS) 
+    - UK Programme for the International Assessment of Adult Competencies (PIAAC) 2023
+    - Skills for Life Survey 2003
+
+## Mutlilevel regression and post-stratification
+
+::::: columns
+::: {.column width="50%"}
+
+The predicted probability $\hat{\pi}_i$ is defined as:
+$$
+\hat{\pi}_i = \text{logit}^{-1} \left( \hat{\beta}_0 + \sum_{x} \hat{\beta}^{x}_{\gamma_x[i]} \right)
+$$
+
+:::
+
+::: {.column width="50%"}
+where $\hat{\beta}_0$ is the intercept, $\hat{\beta}^{x}_{\gamma_x[i]}$ are coefficients for covariates $x$ (age, sex, eng, white, ukborn, qual, inc, job, work, home), and $\gamma_x[i]$ represents the level or category for covariate $x$ for individual $i$. IMD is included as multilevel random effects $\beta^{\text{IMD}}_j \sim \text{N}(\mu_{\text{IMD}}, \sigma_{\text{IMD}}^2)$.
+Priors distributions for fixed effects are normal distributions centered at zero with modest variance, and half-normal priors are used for random effect standard deviations \cite{gelman2006}.
+:::
+:::::
+
+##
+
+The health literacy probabilities for each demographic category (cell $c$) are weighted by their proportion in the actual Newham population. With 11 covariates resulting in $|\mathcal{S}|$ = 13,824 cells, the post-stratified estimate $\hat{\pi}^{\text{mrp}}$ is:
+$$
+\hat{\pi}^{\text{mrp}} = \sum_{c = 1}^{|\mathcal{S}|} w_c \hat{\pi}_{c}
+$$
+where $\mathcal{S}$ is the set of all covariate combinations, $N_c$ is the population frequency for cell $c$, $N$ is the total population size, and $w_c = N_{c} / N$ are the combination weights.
+
+
+## Predictive comparisons :thinking:
+
+- Terminology borrow from @Gelman
+- Like [average treatment effects]{style="color: blue;"} without the causal interpretation
+
+## Raking
+
+
+## Priority ranking
+
+- SUCRA taken from network meta-analysis (NMA)
+
+## Main results :thumbsup:
+
+-   [Performance]{style="color: blue;"}: Generated code can be highly optimized for a specific task, as it doesn't need to carry the overhead of conditional logic for other scenarios.
+
+
+## Sensitivity analyses :thumbsup:
+
+-   [Easier Maintenance]{style="color: blue;"}: You maintain one core piece of code. Changes to the underlying logic only need to be applied in one place.
+
+
+
+## Other data sets
+
+
+
+:::: fragment
+::: callout-note
+## Reference
+
+Green, N., Kurt, M., Moshyk, A., Larkin, J. and Baio, G. (2025), A Bayesian Hierarchical Mixture Cure Modelling Framework to Utilize Multiple Survival Datasets for Long-Term Survivorship Estimates: A Case Study From Previously Untreated Metastatic Melanoma. Statistics in Medicine, 44: e70132. https://doi.org/10.1002/sim.70132
+:::
+::::
+
+## Conclusions
+
+
+
+## Thanks :thankyou:
+
+<!-- ##  -->
+
+<!-- ::::: columns -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- Left column content. -->
+
+<!-- ::: -->
+
+<!-- ::: {.column width="50%"} -->
+
+<!-- Right column content. -->
+
+<!-- ::: -->
+
+<!-- ::::: -->
+
+<!-- ## Map from one model to the next -->
+
+<!-- ``` {.r code-line-numbers="|6|11"} -->
+
+<!-- code -->
+
+<!-- ``` -->
+
+## References
