@@ -184,20 +184,21 @@ $$
 
 **The Goal:** Adjust survey weights ($w$) so that the sample distribution matches known population control totals (margins).
 
-:::: {.columns}
-
+::::: columns
 ::: {.column width="50%"}
 ### 1. Setup
+
 Let $w_{ij}^{(t)}$ be the weight for cell $(i, j)$ at iteration $t$.
 
 We have **Target Margins**:
 
-* $R_i$: Target total for row $i$
-* $C_j$: Target total for col $j$
+-   $R_i$: Target total for row $i$
+-   $C_j$: Target total for col $j$
 :::
 
 ::: {.column width="50%"}
 ### 2. The Mismatch
+
 Initially ($t=0$), the sample sums do not match the population targets:
 
 $$
@@ -208,47 +209,46 @@ $$
 \sum_{i} w_{ij}^{(0)} \neq C_j
 $$
 :::
+:::::
 
-::::
-
----
+------------------------------------------------------------------------
 
 ## The Iterative Algorithm
 
 The algorithm alternates between adjusting rows and columns until convergence.
 
-**Step 1: Row Raking** (Match Row Targets)
-$$
+**Step 1: Row Raking** (Match Row Targets) $$
 w_{ij}^{(t+1/2)} = w_{ij}^{(t)} \times \frac{R_i}{\sum_{k} w_{ik}^{(t)}}
 $$
 
-**Step 2: Column Raking** (Match Column Targets)
-$$
+**Step 2: Column Raking** (Match Column Targets) $$
 w_{ij}^{(t+1)} = w_{ij}^{(t+1/2)} \times \frac{C_j}{\sum_{k} w_{kj}^{(t+1/2)}}
 $$
 
-**Convergence**
-Repeat until $\left| \sum w - \text{Target} \right| < \epsilon$.
-
-
-
+**Convergence** Repeat until $\left| \sum w - \text{Target} \right| < \epsilon$.
 
 ## Priority ranking
 
-To summarize these probabilistic rankings, we adopt the \emph{Surface Under the Cumulative Ranking Curve (SUCRA)} metric, common in multiple-treatment meta-analysis \cite{Salanti2011}. SUCRA represents the percentage of the maximum possible cumulative rank an intervention (in our case, an input variable) can achieve, providing a single value where a higher SUCRA indicates a better overall rank relative to others. For our model, it is given by the following
-$$
+To summarize these probabilistic rankings, we adopt the \emph{Surface Under the Cumulative Ranking Curve (SUCRA)} metric, common in multiple-treatment meta-analysis \cite{Salanti2011}. SUCRA represents the percentage of the maximum possible cumulative rank an intervention (in our case, an input variable) can achieve, providing a single value where a higher SUCRA indicates a better overall rank relative to others. For our model, it is given by the following $$
 \text{SUCRA}_{ij} = \sum_{r=1}^{n-1} P_{ijr} / (n-1),
-$$
-\noindent
-where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$. The mean rank is
-$$
+$$ \noindent where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$. The mean rank is $$
 \mathbb{E}[\text{rank}(i,j)] = n - \sum_{r=1}^{n-1} P_{ijr}.
 $$
 
-
 ## Main results :thumbsup:
 
--   [Performance]{style="color: blue;"}: Generated code can be highly optimized for a specific task, as it doesn't need to carry the overhead of conditional logic for other scenarios.
+
+## Outcome dilution
+
+## Outcome dilution: Results
+
+::: {.r-stack}
+![](ame_forest_group_plot_piaac_imp_outcome.png){.fragment width="80%" fig-align="center"}
+
+![](ame_forest_group_plot_piaac_imp_diluted_0.5.png){.fragment width="80%" fig-align="center"}
+
+![](ame_forest_group_plot_piaac_imp_diluted_1.png){.fragment width="80%" fig-align="center"}
+:::
 
 ## Sensitivity analyses :thumbsup:
 
