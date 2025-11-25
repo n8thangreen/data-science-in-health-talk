@@ -58,9 +58,9 @@ bibliography: mybib.bib
 -   Background
 -   Problems
 -   Solutions
-    * Multilevel regression and post-stratification (MRP)
-    * Predictive comparisons
-    * Prioritisation with SUCRA
+    -   Multilevel regression and post-stratification (MRP)
+    -   Predictive comparisons
+    -   Prioritisation with SUCRA
 -   Main results
 -   Sensitivity analysis
 -   Conclusion
@@ -93,14 +93,14 @@ Remember to introduce myself and the topic here.
 
 ## Background
 
-- [Health literacy]{style="color: blue;"} is broadly defined as the ability to access, understand, appraise, and communicate health information, enabling individuals to engage in healthcare and maintain good health throughout their lives.
+-   [Health literacy]{style="color: blue;"} is broadly defined as the ability to access, understand, appraise, and communicate health information, enabling individuals to engage in healthcare and maintain good health throughout their lives.
 
-- [UCL Public Policy Fellowship]{style="color: blue;"}
+-   [UCL Public Policy Fellowship]{style="color: blue;"}
 
-##
+## 
 
-- Focusses on [Newham]{style="color: blue;"}, a diverse borough in East London that faces unique challenges
-- Identified as having some of the lowest levels of health literacy in the UK by University of Southampton (https://healthliteracy.geodata.uk/)
+-   Focusses on [Newham]{style="color: blue;"}, a diverse borough in East London that faces unique challenges
+-   Identified as having some of the lowest levels of health literacy in the UK by University of Southampton (https://healthliteracy.geodata.uk/)
 
 ::::: columns
 ::: {.column width="50%"}
@@ -114,96 +114,147 @@ Remember to introduce myself and the topic here.
 
 ## Previous method: Synthetic estimation
 
-- Weighted Logistic Regression with Synthetic Estimation (@laursen2016developing)
-    - Frequentist single-level regression with poststratification
-- Used in geography (@gonzalez1973use; @rao2015small)
-- Can be viewed as the simpler predecessor to MRP
-    - Ignores any unique local factors
-    - MRP includes shrinkage via random effects
-- A linear model can be thought of equivalent to [Regression-Synthetic Estimator at Unit Level]{style="color: blue;"}
-    - Like Simulated Treatment Comparison in HTA
-- [Residual-adjusted synthetic estimation]{style="color: blue;"} similar to [Targeted Maximum Likelihood Estimation (TMLE)]{style="color: blue;"} in causal inference
-
+-   Weighted Logistic Regression with Synthetic Estimation (@laursen2016developing)
+    -   Frequentist single-level regression with poststratification
+-   Used in geography (@gonzalez1973use; @rao2015small)
+-   Can be viewed as the simpler predecessor to MRP
+    -   Ignores any unique local factors
+    -   MRP includes shrinkage via random effects
+-   A linear model can be thought of equivalent to [Regression-Synthetic Estimator at Unit Level]{style="color: blue;"}
+    -   Like Simulated Treatment Comparison in HTA
+-   [Residual-adjusted synthetic estimation]{style="color: blue;"} similar to [Targeted Maximum Likelihood Estimation (TMLE)]{style="color: blue;"} in causal inference
 
 ## Problem
 
 ::::: columns
 ::: {.column width="50%"}
-- What are the 'drivers' of health literacy, [specific]{style="color: blue;"} to Newham?
-- Can we [quantify]{style="color: blue;"} them?
-- What would happen to health literacy if we were to [intervene]{style="color: blue;"} to effect one of these?
+-   What are the 'drivers' of health literacy, [specific]{style="color: blue;"} to Newham?
+-   Can we [quantify]{style="color: blue;"} them?
+-   What would happen to health literacy if we were to [intervene]{style="color: blue;"} to effect one of these?
 :::
 
 ::: {.column width="50%"}
 -   Pass kernel / root of distribution name
-
 :::
 :::::
 
 ## Data
 
-- Newham Residents Survey 2023 (NRS)
+-   Newham Residents Survey 2023 (NRS)
 
-- Skills for Life Survey 2011
+-   Skills for Life Survey 2011
 
-- Additional data
-    - Labour Force Survey (LFS) 
-    - UK Programme for the International Assessment of Adult Competencies (PIAAC) 2023
-    - Skills for Life Survey 2003
+-   Additional data
+
+    -   Labour Force Survey (LFS)
+    -   UK Programme for the International Assessment of Adult Competencies (PIAAC) 2023
+    -   Skills for Life Survey 2003
 
 ## Mutlilevel regression and post-stratification
 
 ::::: columns
 ::: {.column width="50%"}
-
-The predicted probability $\hat{\pi}_i$ is defined as:
-$$
+The predicted probability $\hat{\pi}_i$ is defined as: $$
 \hat{\pi}_i = \text{logit}^{-1} \left( \hat{\beta}_0 + \sum_{x} \hat{\beta}^{x}_{\gamma_x[i]} \right)
 $$
-
 :::
 
 ::: {.column width="50%"}
-where $\hat{\beta}_0$ is the intercept, $\hat{\beta}^{x}_{\gamma_x[i]}$ are coefficients for covariates $x$ (age, sex, eng, white, ukborn, qual, inc, job, work, home), and $\gamma_x[i]$ represents the level or category for covariate $x$ for individual $i$. IMD is included as multilevel random effects $\beta^{\text{IMD}}_j \sim \text{N}(\mu_{\text{IMD}}, \sigma_{\text{IMD}}^2)$.
-Priors distributions for fixed effects are normal distributions centered at zero with modest variance, and half-normal priors are used for random effect standard deviations \cite{gelman2006}.
+where $\hat{\beta}_0$ is the intercept, $\hat{\beta}^{x}_{\gamma_x[i]}$ are coefficients for covariates $x$ (age, sex, eng, white, ukborn, qual, inc, job, work, home), and $\gamma_x[i]$ represents the level or category for covariate $x$ for individual $i$. IMD is included as multilevel random effects $\beta^{\text{IMD}}_j \sim \text{N}(\mu_{\text{IMD}}, \sigma_{\text{IMD}}^2)$. Priors distributions for fixed effects are normal distributions centered at zero with modest variance, and half-normal priors are used for random effect standard deviations \cite{gelman2006}.
 :::
 :::::
 
-##
+## 
 
-The health literacy probabilities for each demographic category (cell $c$) are weighted by their proportion in the actual Newham population. With 11 covariates resulting in $|\mathcal{S}|$ = 13,824 cells, the post-stratified estimate $\hat{\pi}^{\text{mrp}}$ is:
-$$
+The health literacy probabilities for each demographic category (cell $c$) are weighted by their proportion in the actual Newham population. With 11 covariates resulting in $|\mathcal{S}|$ = 13,824 cells, the post-stratified estimate $\hat{\pi}^{\text{mrp}}$ is: $$
 \hat{\pi}^{\text{mrp}} = \sum_{c = 1}^{|\mathcal{S}|} w_c \hat{\pi}_{c}
-$$
-where $\mathcal{S}$ is the set of all covariate combinations, $N_c$ is the population frequency for cell $c$, $N$ is the total population size, and $w_c = N_{c} / N$ are the combination weights.
-
+$$ where $\mathcal{S}$ is the set of all covariate combinations, $N_c$ is the population frequency for cell $c$, $N$ is the total population size, and $w_c = N_{c} / N$ are the combination weights.
 
 ## Predictive comparisons :thinking:
 
-- Terminology borrow from @Gelman
-- Like [average treatment effects]{style="color: blue;"} without the causal interpretation
+-   Terminology borrow from @gelman2007average. Also called [predicted change in probability]{style="color: blue;"}
+-   Previously, crops up in other fields e.g. @lee1981covariance ([covariance adjustment mean difference]{style="color: blue;"})
+-   Like [average treatment effects]{style="color: blue;"} without the causal interpretation
 
-## Raking
+$$
+\delta_u(u^{(1)}, u^{(2)}) = \frac{E(y \mid u^{(2)}) - E(y \mid u^{(1)})}{u^{(2)} - u^{(1)}}
+$$
+
+## Raking / Iterative proportional fitting
+
+**The Goal:** Adjust survey weights ($w$) so that the sample distribution matches known population control totals (margins).
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### 1. Setup
+Let $w_{ij}^{(t)}$ be the weight for cell $(i, j)$ at iteration $t$.
+
+We have **Target Margins**:
+
+* $R_i$: Target total for row $i$
+* $C_j$: Target total for col $j$
+:::
+
+::: {.column width="50%"}
+### 2. The Mismatch
+Initially ($t=0$), the sample sums do not match the population targets:
+
+$$
+\sum_{j} w_{ij}^{(0)} \neq R_i
+$$
+
+$$
+\sum_{i} w_{ij}^{(0)} \neq C_j
+$$
+:::
+
+::::
+
+---
+
+## The Iterative Algorithm
+
+The algorithm alternates between adjusting rows and columns until convergence.
+
+**Step 1: Row Raking** (Match Row Targets)
+$$
+w_{ij}^{(t+1/2)} = w_{ij}^{(t)} \times \frac{R_i}{\sum_{k} w_{ik}^{(t)}}
+$$
+
+**Step 2: Column Raking** (Match Column Targets)
+$$
+w_{ij}^{(t+1)} = w_{ij}^{(t+1/2)} \times \frac{C_j}{\sum_{k} w_{kj}^{(t+1/2)}}
+$$
+
+**Convergence**
+Repeat until $\left| \sum w - \text{Target} \right| < \epsilon$.
+
+
 
 
 ## Priority ranking
 
-- SUCRA taken from network meta-analysis (NMA)
+To summarize these probabilistic rankings, we adopt the \emph{Surface Under the Cumulative Ranking Curve (SUCRA)} metric, common in multiple-treatment meta-analysis \cite{Salanti2011}. SUCRA represents the percentage of the maximum possible cumulative rank an intervention (in our case, an input variable) can achieve, providing a single value where a higher SUCRA indicates a better overall rank relative to others. For our model, it is given by the following
+$$
+\text{SUCRA}_{ij} = \sum_{r=1}^{n-1} P_{ijr} / (n-1),
+$$
+\noindent
+where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$. The mean rank is
+$$
+\mathbb{E}[\text{rank}(i,j)] = n - \sum_{r=1}^{n-1} P_{ijr}.
+$$
+
 
 ## Main results :thumbsup:
 
 -   [Performance]{style="color: blue;"}: Generated code can be highly optimized for a specific task, as it doesn't need to carry the overhead of conditional logic for other scenarios.
 
-
 ## Sensitivity analyses :thumbsup:
 
 -   [Easier Maintenance]{style="color: blue;"}: You maintain one core piece of code. Changes to the underlying logic only need to be applied in one place.
 
-
-
 ## Other data sets
-
-
 
 :::: fragment
 ::: callout-note
@@ -214,8 +265,6 @@ Green, N., Kurt, M., Moshyk, A., Larkin, J. and Baio, G. (2025), A Bayesian Hier
 ::::
 
 ## Conclusions
-
-
 
 ## Thanks :thankyou:
 
