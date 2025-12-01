@@ -266,7 +266,18 @@ $$
 
 ## Main results :thumbsup:
 
--   [Performance]{style="color: blue;"}: Generated code can be highly optimized for a specific task, as it doesn't need to carry the overhead of conditional logic for other scenarios.
+
+## Outcome dilution
+
+## Outcome dilution: Results
+
+::: {.r-stack}
+![](ame_forest_group_plot_piaac_imp_outcome.png){.fragment width="80%" fig-align="center"}
+
+![](ame_forest_group_plot_piaac_imp_diluted_0.5.png){.fragment width="80%" fig-align="center"}
+
+![](ame_forest_group_plot_piaac_imp_diluted_1.png){.fragment width="80%" fig-align="center"}
+:::
 
 ## Sensitivity analyses :thumbsup:
 
