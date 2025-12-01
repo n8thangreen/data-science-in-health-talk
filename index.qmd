@@ -161,7 +161,7 @@ how data-driven methods are shaping real-world health impact.
 
 -   **Skills for Life (SfL) Survey 2011**
     * Comprehensive computer-based assessment conducted by the ONS to evaluate the skills of literacy, numeracy, and ICT
-    * Total 7230 adults in England. 
+    * Total 7230 adults in England
     
 -   Additional data
 
@@ -170,15 +170,35 @@ how data-driven methods are shaping real-world health impact.
     -   Skills for Life Survey 2003
     -   UK Census 2011, 2021
 
+## Health literacy definition
+
+::::: columns
+::: {.column width="50%"}
+- From @rowlands2015
+- Sample of health materials, including
+    * medicine labels
+    * booklets
+    * application forms
+- Covered themes of health promotion, managing illness, systems navigation and disease prevention
+- Assessed for literacy and numeracy complexity by [education experts]{style="color: blue;"}
+- SfL responses were mapped to the binary health literacy scale according to whether they are [above or below threshold]{style="color: blue;"}
+:::
+
+::: {.column width="50%"}
+![](health_literacy_docs_photo.jpeg)
+:::
+:::::
+
+
 ## Newham vs SfL profiles
 
 ![](dumbbell_plot_literacy.png)
 
-## Mutlilevel Regression and Post-stratification
+## [Mutlilevel Regression]{style="color: blue;"} and Post-stratification
 
 ::::: columns
 ::: {.column width="50%"}
-The predicted probability $\hat{\pi}_i$ is defined as: $$
+The predicted probability defined as: $$
 \hat{\pi}_i = \text{logit}^{-1} \left( \hat{\beta}_0 + \sum_{x} \hat{\beta}^{x}_{\gamma_x[i]} \right)
 $$
 :::
@@ -193,83 +213,95 @@ $$
 :::
 :::::
 
-## 
+## Mutlilevel Regression and [Post-stratification]{style="color: blue;"}
 
-The health literacy probabilities for each demographic category (cell $c$) are weighted by their proportion in the actual Newham population. With 11 covariates resulting in $|\mathcal{S}|$ = 13,824 cells, the post-stratified estimate $\hat{\pi}^{\text{mrp}}$ is: $$
+- The health literacy probabilities for each demographic category (cell $c$) are weighted by their proportion in the actual Newham population
+- 11 covariates is 13,824 cells
+- Post-stratified estimate is: $$
 \hat{\pi}^{\text{mrp}} = \sum_{c = 1}^{|\mathcal{S}|} w_c \hat{\pi}_{c}
-$$ where $\mathcal{S}$ is the set of all covariate combinations, $N_c$ is the population frequency for cell $c$, $N$ is the total population size, and $w_c = N_{c} / N$ are the combination weights.
+$$
+
+- $\mathcal{S}$ is the set of all covariate combinations
+
+- $N_c$ is the population frequency for cell $c$
+
+- $N$ is the total population size
+
+- $w_c = N_{c} / N$ are the combination weights
+
 
 ## Predictive comparisons :thinking:
 
 -   Terminology borrow from @gelman2007average. Also called [predicted change in probability]{style="color: blue;"}
 -   Previously, crops up in other fields e.g. @lee1981covariance ([covariance adjustment mean difference]{style="color: blue;"})
--   Like [average treatment effects]{style="color: blue;"} without the causal interpretation
-
-$$
+-   Like [average treatment effects]{style="color: blue;"} without the causal interpretation$$
 \delta_u(u^{(1)}, u^{(2)}) = \frac{E(y \mid u^{(2)}) - E(y \mid u^{(1)})}{u^{(2)} - u^{(1)}}
 $$
 
-## Raking / Iterative proportional fitting
+## Missing joint distributions
 
-**The Goal:** Adjust survey weights ($w$) so that the sample distribution matches known population control totals (margins).
+- [Raking / Iterative proportional fitting (IPF)]{style="color: blue;"}
+    * Adjust survey weights so that the sample distribution matches known population control totals (margins)
+- Census data $\rightarrow$ Marginals
+- Labour Force Survey (LFS) $\rightarrow$ Covariance structure
+- Overlap issues, non-representative
+    * Data augmentation *before* IPF
+    * Laplace smoothing *after* IPF
+        * Like "zero cell" problem in meta-analyses
 
-::::: columns
-::: {.column width="50%"}
-### 1. Setup
-
-Let $w_{ij}^{(t)}$ be the weight for cell $(i, j)$ at iteration $t$.
-
-We have **Target Margins**:
-
--   $R_i$: Target total for row $i$
--   $C_j$: Target total for col $j$
-:::
-
-::: {.column width="50%"}
-### 2. The Mismatch
-
-Initially ($t=0$), the sample sums do not match the population targets:
-
-$$
-\sum_{j} w_{ij}^{(0)} \neq R_i
-$$
-
-$$
-\sum_{i} w_{ij}^{(0)} \neq C_j
-$$
-:::
-:::::
-
-------------------------------------------------------------------------
-
-## The Iterative Algorithm {visibility="hidden"}
-
-The algorithm alternates between adjusting rows and columns until convergence.
-
-**Step 1: Row Raking** (Match Row Targets) $$
-w_{ij}^{(t+1/2)} = w_{ij}^{(t)} \times \frac{R_i}{\sum_{k} w_{ik}^{(t)}}
-$$
-
-**Step 2: Column Raking** (Match Column Targets) $$
-w_{ij}^{(t+1)} = w_{ij}^{(t+1/2)} \times \frac{C_j}{\sum_{k} w_{kj}^{(t+1/2)}}
-$$
-
-**Convergence** Repeat until $\left| \sum w - \text{Target} \right| < \epsilon$.
 
 ## Priority ranking
 
-To summarize these probabilistic rankings, we adopt the \emph{Surface Under the Cumulative Ranking Curve (SUCRA)} metric, common in multiple-treatment meta-analysis \cite{Salanti2011}. SUCRA represents the percentage of the maximum possible cumulative rank an intervention (in our case, an input variable) can achieve, providing a single value where a higher SUCRA indicates a better overall rank relative to others. For our model, it is given by the following $$
+- Adopt [Surface Under the Cumulative Ranking Curve (SUCRA)]{style="color: blue;"}
+    * Common in multiple-treatment meta-analysis \cite{Salanti2011}
+- Percentage of the maximum possible cumulative rank an intervention can achieve
+- Providing a single value where a higher SUCRA indicates a better overall rank relative to others $$
 \text{SUCRA}_{ij} = \sum_{r=1}^{n-1} P_{ijr} / (n-1),
-$$ \noindent where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$. The mean rank is $$
+$$
+
+
+- where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$
+- The mean rank is $$
 \mathbb{E}[\text{rank}(i,j)] = n - \sum_{r=1}^{n-1} P_{ijr}.
 $$
 
 ## Main results :thumbsup:
 
+![]()
 
-## Outcome dilution
 
-## Outcome dilution: Results
+## Sensitivity analyses :thumbsup:
+
+-   Concern was raised that the relationship between the covariates and the health literacy outcomes may have [changed over time]{style="color: blue;"}
+- So using SfL 2011 is not appropriate?
+
+- Suggested more recent survey data PIAAC 2023
+    * Missing data in PIAAC
+    * Impute using covariate relationship in SfL 2011
+        * Weaker assumption than with outcome
+    
+- Also fitted to SfL 2001 to see trend back in time
+
+## Covariate imputation
+
+- Covariate noise introduces [Dilution or Attenuation]{style="color: blue;"}, where signal is weakened
+- [Uncongeniality]{style="color: blue;"} is when there is a mismatch between the imputation and the main model
+    * Not including outcome essentially drop association with imputed covariates
+- So [trade-off]{style="color: blue;"} between including outcome for congeniality and excluding because of temporal drift
+- Perform sensitivity analysis by including additional noise to outcome
+    * Equivalent to influence of [prior distribution]{style="color: blue;"} in Bayesian model
+
+##
+
+![](dillution_plots.png)
+
+:::: fragment
+::: callout-note
+Figure from @Hutcheonc2289
+:::
+::::
+
+## Congeniality sensitivity in imputation
 
 ::: {.r-stack}
 ![](ame_forest_group_plot_piaac_imp_outcome.png){.fragment width="80%" fig-align="center"}
@@ -279,19 +311,14 @@ $$
 ![](ame_forest_group_plot_piaac_imp_diluted_1.png){.fragment width="80%" fig-align="center"}
 :::
 
-## Sensitivity analyses :thumbsup:
 
--   [Easier Maintenance]{style="color: blue;"}: You maintain one core piece of code. Changes to the underlying logic only need to be applied in one place.
+<!-- :::: fragment -->
+<!-- ::: callout-note -->
+<!-- ## Reference -->
 
-## Other data sets
-
-:::: fragment
-::: callout-note
-## Reference
-
-Green, N., Kurt, M., Moshyk, A., Larkin, J. and Baio, G. (2025), A Bayesian Hierarchical Mixture Cure Modelling Framework to Utilize Multiple Survival Datasets for Long-Term Survivorship Estimates: A Case Study From Previously Untreated Metastatic Melanoma. Statistics in Medicine, 44: e70132. https://doi.org/10.1002/sim.70132
-:::
-::::
+<!-- Green, N., Kurt, M., Moshyk, A., Larkin, J. and Baio, G. (2025), A Bayesian Hierarchical Mixture Cure Modelling Framework to Utilize Multiple Survival Datasets for Long-Term Survivorship Estimates: A Case Study From Previously Untreated Metastatic Melanoma. Statistics in Medicine, 44: e70132. https://doi.org/10.1002/sim.70132 -->
+<!-- ::: -->
+<!-- :::: -->
 
 ## Conclusions
 
