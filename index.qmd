@@ -1,6 +1,7 @@
 ---
 title: "Estimating the Determinants of Health Literacy for Policy Prioritisation"
 # : A Local Level Case Study in Newham, London
+subtitle: "UCL CDS Symposium on Data Science in Public Health"
 author: "Nathan Green"
 institute: "Department of Statistical Science, UCL"
 format:
@@ -58,7 +59,7 @@ bibliography: mybib.bib
 -   Background
 -   Problems
 -   Solutions
-    -   Multilevel regression and post-stratification (MRP)
+    -   Local level estimation
     -   Predictive comparisons
     -   Prioritisation with SUCRA
 -   Main results
@@ -75,6 +76,8 @@ Slides and code here: `github.com/n8thangreen/data-science-in-health-talk`
 
 ::: notes
 Remember to introduce myself and the topic here.
+emerging approaches at the interface of data science, statistics, and public health. 
+how data-driven methods are shaping real-world health impact.
 :::
 
 <!-- ##  -->
@@ -93,14 +96,25 @@ Remember to introduce myself and the topic here.
 
 ## Background
 
+<div align="center">
+
+![](fellowship-webpage.png)
+
+</div>
+
+<!-- <img src="fellowship-webpage.png"> -->
+
+## Background
+
+-   Project title: **Assessed  the factors that determine health literacy and the size of their influence/impact for Newham** 
+
 -   [Health literacy]{style="color: blue;"} is broadly defined as the ability to access, understand, appraise, and communicate health information, enabling individuals to engage in healthcare and maintain good health throughout their lives.
 
--   [UCL Public Policy Fellowship]{style="color: blue;"}
 
 ## 
 
 -   Focusses on [Newham]{style="color: blue;"}, a diverse borough in East London that faces unique challenges
--   Identified as having some of the lowest levels of health literacy in the UK by University of Southampton (https://healthliteracy.geodata.uk/)
+-   Identified as having some of the [lowest levels]{style="color: blue;"} of health literacy in the UK by University of Southampton (https://healthliteracy.geodata.uk/)
 
 ::::: columns
 ::: {.column width="50%"}
@@ -117,40 +131,50 @@ Remember to introduce myself and the topic here.
 -   Weighted Logistic Regression with Synthetic Estimation (@laursen2016developing)
     -   Frequentist single-level regression with poststratification
 -   Used in geography (@gonzalez1973use; @rao2015small)
--   Can be viewed as the simpler predecessor to MRP
+-   Can be viewed as the simpler predecessor to [Multilevel Regression with Post-stratification (MRP)]{style="color: blue;"}
     -   Ignores any unique local factors
     -   MRP includes shrinkage via random effects
--   A linear model can be thought of equivalent to [Regression-Synthetic Estimator at Unit Level]{style="color: blue;"}
-    -   Like Simulated Treatment Comparison in HTA
--   [Residual-adjusted synthetic estimation]{style="color: blue;"} similar to [Targeted Maximum Likelihood Estimation (TMLE)]{style="color: blue;"} in causal inference
+
+
+## Some (rough) comparisons
+
+
+| Small Area Estimation (SAE) | | HTA / Statistics Method |
+| :---- | :--: | :--- |
+| Weighted Logistic Regression with Synthetic Estimation<br><br><ul><li>Ignores any unique local factors</li></ul> | $\longrightarrow$ | Multilevel Regression with Post-stratification (MRP)<br><ul><li>Includes shrinkage via random effects</li></ul> |
+| Linear Plug-In Model<br>*(Equivalent to Regression-Synthetic Estimator at Unit Level)* | $\longrightarrow$ | Simulated Treatment Comparison (STC) |
+| Residual-adjusted synthetic estimation | $\longrightarrow$ | Targeted Maximum Likelihood Estimation (TMLE)<br>*(in causal inference)* |
 
 ## Problem
 
-::::: columns
-::: {.column width="50%"}
--   What are the 'drivers' of health literacy, [specific]{style="color: blue;"} to Newham?
--   Can we [quantify]{style="color: blue;"} them?
+-   What are the ['drivers']{style="color: blue;"} of health literacy?
+-   Can we [quantify]{style="color: blue;"} them? [Specific]{style="color: blue;"} to Newham?
 -   What would happen to health literacy if we were to [intervene]{style="color: blue;"} to effect one of these?
-:::
 
-::: {.column width="50%"}
--   Pass kernel / root of distribution name
-:::
-:::::
 
 ## Data
 
--   Newham Residents Survey 2023 (NRS)
+-   **Newham Residents Survey 2023 (NRS)**
+    * Periodic survey, usually every two years
+    * Detailed information on views, experiences, and needs of Newham residents
+    * Covers satisfaction with local services, community safety, health and well-being, housing, and employment
 
--   Skills for Life Survey 2011
-
+-   **Skills for Life (SfL) Survey 2011**
+    * Comprehensive computer-based assessment conducted by the ONS to evaluate the skills of literacy, numeracy, and ICT
+    * Total 7230 adults in England. 
+    
 -   Additional data
 
-    -   Labour Force Survey (LFS)
+    -   Labour Force Survey (LFS) / Annual Population Survey (APS)
     -   UK Programme for the International Assessment of Adult Competencies (PIAAC) 2023
     -   Skills for Life Survey 2003
+    -   UK Census 2011, 2021
 
-## Mutlilevel regression and post-stratification
+## Newham vs SfL profiles
+
+![](dumbbell_plot_literacy.png)
+
+## Mutlilevel Regression and Post-stratification
 
 ::::: columns
 ::: {.column width="50%"}
@@ -160,7 +184,12 @@ $$
 :::
 
 ::: {.column width="50%"}
-where $\hat{\beta}_0$ is the intercept, $\hat{\beta}^{x}_{\gamma_x[i]}$ are coefficients for covariates $x$ (age, sex, eng, white, ukborn, qual, inc, job, work, home), and $\gamma_x[i]$ represents the level or category for covariate $x$ for individual $i$. IMD is included as multilevel random effects $\beta^{\text{IMD}}_j \sim \text{N}(\mu_{\text{IMD}}, \sigma_{\text{IMD}}^2)$. Priors distributions for fixed effects are normal distributions centered at zero with modest variance, and half-normal priors are used for random effect standard deviations \cite{gelman2006}.
+- $\hat{\beta}_0$ is the intercept, $\hat{\beta}^{x}_{\gamma_x[i]}$ are coefficients for covariates $x$
+     * age, sex, English language, white ethnicity, UK born, qualifications, income, job status, work role, home ownership
+- $\gamma_x[i]$ represents the level or category for covariate $x$ for individual $i$. 
+- IMD is included as multilevel random effects $\beta^{\text{IMD}}_j \sim \text{N}(\mu_{\text{IMD}}, \sigma_{\text{IMD}}^2)$
+- Prior distributions for fixed effects normal distributions centered at zero with modest variance
+- Half-normal priors are used for random effect standard deviations \cite{gelman2006}.
 :::
 :::::
 
@@ -184,20 +213,21 @@ $$
 
 **The Goal:** Adjust survey weights ($w$) so that the sample distribution matches known population control totals (margins).
 
-:::: {.columns}
-
+::::: columns
 ::: {.column width="50%"}
 ### 1. Setup
+
 Let $w_{ij}^{(t)}$ be the weight for cell $(i, j)$ at iteration $t$.
 
 We have **Target Margins**:
 
-* $R_i$: Target total for row $i$
-* $C_j$: Target total for col $j$
+-   $R_i$: Target total for row $i$
+-   $C_j$: Target total for col $j$
 :::
 
 ::: {.column width="50%"}
 ### 2. The Mismatch
+
 Initially ($t=0$), the sample sums do not match the population targets:
 
 $$
@@ -208,43 +238,31 @@ $$
 \sum_{i} w_{ij}^{(0)} \neq C_j
 $$
 :::
+:::::
 
-::::
+------------------------------------------------------------------------
 
----
-
-## The Iterative Algorithm
+## The Iterative Algorithm {visibility="hidden"}
 
 The algorithm alternates between adjusting rows and columns until convergence.
 
-**Step 1: Row Raking** (Match Row Targets)
-$$
+**Step 1: Row Raking** (Match Row Targets) $$
 w_{ij}^{(t+1/2)} = w_{ij}^{(t)} \times \frac{R_i}{\sum_{k} w_{ik}^{(t)}}
 $$
 
-**Step 2: Column Raking** (Match Column Targets)
-$$
+**Step 2: Column Raking** (Match Column Targets) $$
 w_{ij}^{(t+1)} = w_{ij}^{(t+1/2)} \times \frac{C_j}{\sum_{k} w_{kj}^{(t+1/2)}}
 $$
 
-**Convergence**
-Repeat until $\left| \sum w - \text{Target} \right| < \epsilon$.
-
-
-
+**Convergence** Repeat until $\left| \sum w - \text{Target} \right| < \epsilon$.
 
 ## Priority ranking
 
-To summarize these probabilistic rankings, we adopt the \emph{Surface Under the Cumulative Ranking Curve (SUCRA)} metric, common in multiple-treatment meta-analysis \cite{Salanti2011}. SUCRA represents the percentage of the maximum possible cumulative rank an intervention (in our case, an input variable) can achieve, providing a single value where a higher SUCRA indicates a better overall rank relative to others. For our model, it is given by the following
-$$
+To summarize these probabilistic rankings, we adopt the \emph{Surface Under the Cumulative Ranking Curve (SUCRA)} metric, common in multiple-treatment meta-analysis \cite{Salanti2011}. SUCRA represents the percentage of the maximum possible cumulative rank an intervention (in our case, an input variable) can achieve, providing a single value where a higher SUCRA indicates a better overall rank relative to others. For our model, it is given by the following $$
 \text{SUCRA}_{ij} = \sum_{r=1}^{n-1} P_{ijr} / (n-1),
-$$
-\noindent
-where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$. The mean rank is
-$$
+$$ \noindent where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$. The mean rank is $$
 \mathbb{E}[\text{rank}(i,j)] = n - \sum_{r=1}^{n-1} P_{ijr}.
 $$
-
 
 ## Main results :thumbsup:
 
