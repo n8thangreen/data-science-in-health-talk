@@ -12,8 +12,9 @@ local emoji_map = {
   head_exploding = "🤯",
   cannot_look = "🫣",
   silly_face = "🤪",
-  thankyou = "🙏"
-  -- Add more mappings as needed
+  thankyou = "🙏",
+  talking = "🗣️",
+  stop = "⛔"
 }
 
 function Str(el)

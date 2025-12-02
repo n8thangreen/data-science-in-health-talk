@@ -6,6 +6,7 @@ author: "Nathan Green"
 institute: "Department of Statistical Science, UCL"
 format:
   revealjs:
+    pdf-separate-fragments: false
     show-slide-number: all
     incremental: true
     footer: "Nathan Green | UCL | n.green@ucl.ac.uk"
@@ -61,9 +62,7 @@ bibliography: mybib.bib
 -   Solutions
     -   Local level estimation
     -   Predictive comparisons
-    -   Prioritisation with SUCRA
--   Main results
--   Sensitivity analysis
+    -   Prioritisation
 -   Conclusion
 
 :::: fragment
@@ -75,9 +74,7 @@ Slides and code here: `github.com/n8thangreen/data-science-in-health-talk`
 ::::
 
 ::: notes
-Remember to introduce myself and the topic here.
-emerging approaches at the interface of data science, statistics, and public health. 
-how data-driven methods are shaping real-world health impact.
+Remember to introduce myself and the topic here. emerging approaches at the interface of data science, statistics, and public health. how data-driven methods are shaping real-world health impact.
 :::
 
 <!-- ##  -->
@@ -96,20 +93,17 @@ how data-driven methods are shaping real-world health impact.
 
 ## Background
 
-<div align="center">
-
+::: {align="center"}
 ![](fellowship-webpage.png)
-
-</div>
+:::
 
 <!-- <img src="fellowship-webpage.png"> -->
 
-## Background
+## Project outline
 
--   Project title: **Assessed  the factors that determine health literacy and the size of their influence/impact for Newham** 
+-   Title: **Assesses the factors that determine health literacy and the size of their influence/impact for Newham**
 
 -   [Health literacy]{style="color: blue;"} is broadly defined as the ability to access, understand, appraise, and communicate health information, enabling individuals to engage in healthcare and maintain good health throughout their lives.
-
 
 ## 
 
@@ -126,172 +120,225 @@ how data-driven methods are shaping real-world health impact.
 :::
 :::::
 
+
 ## Previous method: Synthetic estimation
-
--   Weighted Logistic Regression with Synthetic Estimation (@laursen2016developing)
-    -   Frequentist single-level regression with poststratification
--   Used in geography (@gonzalez1973use; @rao2015small)
--   Can be viewed as the simpler predecessor to [Multilevel Regression with Post-stratification (MRP)]{style="color: blue;"}
-    -   Ignores any unique local factors
-    -   MRP includes shrinkage via random effects
-
-
-## Some (rough) comparisons
-
-
-| Small Area Estimation (SAE) | | HTA / Statistics Method |
-| :---- | :--: | :--- |
-| Weighted Logistic Regression with Synthetic Estimation<br><br><ul><li>Ignores any unique local factors</li></ul> | $\longrightarrow$ | Multilevel Regression with Post-stratification (MRP)<br><ul><li>Includes shrinkage via random effects</li></ul> |
-| Linear Plug-In Model<br>*(Equivalent to Regression-Synthetic Estimator at Unit Level)* | $\longrightarrow$ | Simulated Treatment Comparison (STC) |
-| Residual-adjusted synthetic estimation | $\longrightarrow$ | Targeted Maximum Likelihood Estimation (TMLE)<br>*(in causal inference)* |
-
-## Problem
-
--   What are the ['drivers']{style="color: blue;"} of health literacy?
--   Can we [quantify]{style="color: blue;"} them? [Specific]{style="color: blue;"} to Newham?
--   What would happen to health literacy if we were to [intervene]{style="color: blue;"} to effect one of these?
-
-
-## Data
-
--   **Newham Residents Survey 2023 (NRS)**
-    * Periodic survey, usually every two years
-    * Detailed information on views, experiences, and needs of Newham residents
-    * Covers satisfaction with local services, community safety, health and well-being, housing, and employment
-
--   **Skills for Life (SfL) Survey 2011**
-    * Comprehensive computer-based assessment conducted by the ONS to evaluate the skills of literacy, numeracy, and ICT
-    * Total 7230 adults in England
-    
--   Additional data
-
-    -   Labour Force Survey (LFS) / Annual Population Survey (APS)
-    -   UK Programme for the International Assessment of Adult Competencies (PIAAC) 2023
-    -   Skills for Life Survey 2003
-    -   UK Census 2011, 2021
-
-## Health literacy definition
 
 ::::: columns
 ::: {.column width="50%"}
-- From @rowlands2015
-- Sample of health materials, including
-    * medicine labels
-    * booklets
-    * application forms
-- Covered themes of health promotion, managing illness, systems navigation and disease prevention
-- Assessed for literacy and numeracy complexity by [education experts]{style="color: blue;"}
-- SfL responses were mapped to the binary health literacy scale according to whether they are [above or below threshold]{style="color: blue;"}
+-   Weighted Logistic Regression with Synthetic Estimation (@laursen2016developing)
+    -   Frequentist single-level regression with poststratification
+-   Used in [Small Area Estimation (SAE)]{style="color: blue;"} (@gonzalez1973use; @rao2015small)
+-   Can be viewed as the simpler predecessor to [Multilevel Regression with Post-stratification (MRP)]{style="color: blue;"}
+    -   Ignores any unique local factors
+    -   MRP includes shrinkage via random effects
 :::
 
 ::: {.column width="50%"}
-![](health_literacy_docs_photo.jpeg)
+![](sae-book.jpeg){fig-align="center"}
 :::
 :::::
 
 
-## Newham vs SfL profiles
 
-![](dumbbell_plot_literacy.png)
+
+## Talking a different language :talking:
+
+| Small Area Estimation (SAE) (Previous) |   | HTA / Statistics Method (Me) |
+|:---------------------------|:--------------------:|:---------------------|
+| Weighted Logistic Regression with Synthetic Estimation<br><br> | $\longrightarrow$ | Multilevel Regression with Post-stratification (MRP)<br> |
+| Linear Plug-In Model<br>*(Equivalent to Regression-Synthetic Estimator at Unit Level)* | $\longrightarrow$ | Simulated Treatment Comparison (STC) |
+| Residual-adjusted synthetic estimation | $\longrightarrow$ | Targeted Maximum Likelihood Estimation (TMLE)<br>*(in causal inference)* |
+
+## Problems
+
+1. What is health literacy level [specific to Newham]{style="color: blue;"}?
+2. What are the ['drivers']{style="color: blue;"} of health literacy?
+3. How should we [intervene]{style="color: blue;"} to effect health literacy outcomes?
+
+## Available data
+
+-   **Skills for Life (SfL) Survey 2011** [[MR]{style="color: blue;"}P]
+
+    -   Comprehensive computer-based assessment conducted by the ONS to evaluate the skills of literacy, numeracy, and ICT
+    -   Total 7230 adults in England
+
+-   **Newham Residents Survey 2023 (NRS)** [MR[P]{style="color: blue;"}]
+
+    -   Periodic survey, usually every two years
+    -   Detailed information on views, experiences, and needs of Newham residents
+    -   Covers satisfaction with local services, community safety, health and well-being, housing, and employment
+
+-   Additional data
+
+    -   UK Programme for International Assessment of Adult Competencies (PIAAC) 2023 [[MR]{style="color: blue;"}P]
+    -   Skills for Life Survey 2003 [[MR]{style="color: blue;"}P]
+    -   Labour Force Survey (LFS) / Annual Population Survey (APS) [MR[P]{style="color: blue;"}]
+    -   UK Census 2011, 2021 [MR[P]{style="color: blue;"}]
+
+## From Skills for Life to Health literacy
+
+::::: columns
+::: {.column width="50%"}
+-   From @rowlands2015
+-   Sample of health materials, including
+    -   medicine labels
+    -   booklets
+    -   application forms
+-   Covered themes of health promotion, managing illness, systems navigation and disease prevention
+-   Assessed for literacy and numeracy complexity by [education experts]{style="color: blue;"}
+-   SfL responses were mapped to the binary health literacy scale according to whether they are [above or below threshold]{style="color: blue;"}
+:::
+
+::: {.column width="50%"}
+<br>
+<br>
+<br>
+<br>
+![](health_literacy_docs_photo.jpeg)
+:::
+:::::
+
+## 
+
+# Problem 1: Newham specific health literacy estimates? :thinking:
+
+
+## Newham vs Skills for Life profiles
+
+![](dumbbell_plot_literacy.png){fig-align="center"}
 
 ## [Mutlilevel Regression]{style="color: blue;"} and Post-stratification
 
 ::::: columns
 ::: {.column width="50%"}
-The predicted probability defined as: $$
+The predicted probability defined as:
+<br>
+<br>
+<br>
+<br>
+$$
 \hat{\pi}_i = \text{logit}^{-1} \left( \hat{\beta}_0 + \sum_{x} \hat{\beta}^{x}_{\gamma_x[i]} \right)
 $$
 :::
 
 ::: {.column width="50%"}
-- $\hat{\beta}_0$ is the intercept, $\hat{\beta}^{x}_{\gamma_x[i]}$ are coefficients for covariates $x$
-     * age, sex, English language, white ethnicity, UK born, qualifications, income, job status, work role, home ownership
-- $\gamma_x[i]$ represents the level or category for covariate $x$ for individual $i$. 
-- IMD is included as multilevel random effects $\beta^{\text{IMD}}_j \sim \text{N}(\mu_{\text{IMD}}, \sigma_{\text{IMD}}^2)$
-- Prior distributions for fixed effects normal distributions centered at zero with modest variance
-- Half-normal priors are used for random effect standard deviations \cite{gelman2006}.
+-   $\hat{\beta}_0$ is the intercept, $\hat{\beta}^{x}_{\gamma_x[i]}$ are coefficients for covariates $x$
+    -   age, sex, English language, white ethnicity, UK born, qualifications, income, job status, work role, home ownership
+-   $\gamma_x[i]$ represents the level or category for covariate $x$ for individual $i$
+-   IMD is included as multilevel random effects $\beta^{\text{IMD}}_j \sim \text{N}(\mu_{\text{IMD}}, \sigma_{\text{IMD}}^2)$
+-   Prior distributions for fixed effects normal distributions centered at zero with modest variance
+-   Half-normal priors are used for random effect standard deviations
 :::
 :::::
 
 ## Mutlilevel Regression and [Post-stratification]{style="color: blue;"}
 
-- The health literacy probabilities for each demographic category (cell $c$) are weighted by their proportion in the actual Newham population
-- 11 covariates is 13,824 cells
-- Post-stratified estimate is: $$
-\hat{\pi}^{\text{mrp}} = \sum_{c = 1}^{|\mathcal{S}|} w_c \hat{\pi}_{c}
-$$
+-   The health literacy probabilities for each demographic category (cell $c$) are weighted by their proportion in the actual Newham population
 
-- $\mathcal{S}$ is the set of all covariate combinations
+-   11 covariates $\rightarrow$ 13,824 cells
 
-- $N_c$ is the population frequency for cell $c$
+-   Post-stratified estimate is: $$
+    \hat{\pi}^{\text{mrp}} = \sum_{c = 1}^{|\mathcal{S}|}  \frac{N_{c} \hat{\pi}_{c}}{N}
+    $$
 
-- $N$ is the total population size
+-   $\mathcal{S}$ is the set of all covariate combinations
 
-- $w_c = N_{c} / N$ are the combination weights
+-   $N_c$ is the population frequency for cell $c$
 
+-   $N$ is the total population size
 
-## Predictive comparisons :thinking:
-
--   Terminology borrow from @gelman2007average. Also called [predicted change in probability]{style="color: blue;"}
--   Previously, crops up in other fields e.g. @lee1981covariance ([covariance adjustment mean difference]{style="color: blue;"})
--   Like [average treatment effects]{style="color: blue;"} without the causal interpretation$$
-\delta_u(u^{(1)}, u^{(2)}) = \frac{E(y \mid u^{(2)}) - E(y \mid u^{(1)})}{u^{(2)} - u^{(1)}}
-$$
 
 ## Missing joint distributions
 
-- [Raking / Iterative proportional fitting (IPF)]{style="color: blue;"}
-    * Adjust survey weights so that the sample distribution matches known population control totals (margins)
-- Census data $\rightarrow$ Marginals
-- Labour Force Survey (LFS) $\rightarrow$ Covariance structure
-- Overlap issues, non-representative
-    * Data augmentation *before* IPF
-    * Laplace smoothing *after* IPF
-        * Like "zero cell" problem in meta-analyses
+::::: columns
+::: {.column width="50%"}
+-   [Raking / Iterative proportional fitting (IPF)]{style="color: blue;"}
+    -   Adjust survey weights so that the sample distribution matches known population control totals (margins)
+-   Census data $\rightarrow$ Marginals
+-   Labour Force Survey (LFS) $\rightarrow$ Covariance structure
+-   Overlap issues, non-representative
+    -   Data augmentation *before* IPF
+    -   Laplace smoothing *after* IPF
+        -   Like "zero cell" problem in meta-analyses
+- [Copula]{style="color: blue;"} method alternative
+:::
 
+::: {.column width="50%"}
+![](rubics-cube.jpeg){fig-align="right"}
+:::
+:::::
+
+
+# Problem 2: What are the 'drivers' in Newham? :thinking:
+
+## Predictive comparisons
+
+-   Terminology borrow from @gelman2007. Also called [predicted change in probability]{style="color: blue;"}
+-   Previously, crops up in other fields e.g. @lee1981covariance ([covariance adjustment mean difference]{style="color: blue;"})
+-   Like [average treatment effects]{style="color: blue;"} without the causal interpretation<br><br><br><br>$$
+    \delta_u(u^{(1)}, u^{(2)}) = \frac{\mathbb{E}(y \mid u^{(2)}) - \mathbb{E}(y \mid u^{(1)})}{u^{(2)} - u^{(1)}}
+    $$
+
+## MRP-PC results
+
+![](ame_forest_group_plot.png){fig-align="center"}
+
+
+## 
+
+# Problem 3: How should we intervene? :thinking:
+<!-- {background-color="#40666e"} -->
 
 ## Priority ranking
 
-- Adopt [Surface Under the Cumulative Ranking Curve (SUCRA)]{style="color: blue;"}
-    * Common in multiple-treatment meta-analysis \cite{Salanti2011}
-- Percentage of the maximum possible cumulative rank an intervention can achieve
-- Providing a single value where a higher SUCRA indicates a better overall rank relative to others $$
-\text{SUCRA}_{ij} = \sum_{r=1}^{n-1} P_{ijr} / (n-1),
-$$
+-   Adopt [Surface Under the Cumulative Ranking Curve (SUCRA)]{style="color: blue;"}
 
+    -   Common in multiple-treatment meta-analysis \cite{Salanti2011}
 
-- where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$
-- The mean rank is $$
-\mathbb{E}[\text{rank}(i,j)] = n - \sum_{r=1}^{n-1} P_{ijr}.
-$$
+-   Percentage of the maximum possible cumulative rank an intervention can achieve
 
-## Main results :thumbsup:
+-   Providing a [single value]{style="color: blue;"} where a higher SUCRA indicates a better overall rank relative to others $$
+    \text{SUCRA}_{ij} = \sum_{r=1}^{n-1} P_{ijr} / (n-1),
+    $$
 
-![]()
+-   where $P_{ijr}$ is the cumulative probability for variable $i$ at level $j$ and rank $r$
 
+-   Mean rank is $$
+    \mathbb{E}[\text{rank}(i,j)] = n - \sum_{r=1}^{n-1} P_{ijr}
+    $$
 
-## Sensitivity analyses :thumbsup:
+## Ranking results
 
--   Concern was raised that the relationship between the covariates and the health literacy outcomes may have [changed over time]{style="color: blue;"}
-- So using SfL 2011 is not appropriate?
-
-- Suggested more recent survey data PIAAC 2023
-    * Missing data in PIAAC
-    * Impute using covariate relationship in SfL 2011
-        * Weaker assumption than with outcome
-    
-- Also fitted to SfL 2001 to see trend back in time
-
-## Covariate imputation
-
-- Covariate noise introduces [Dilution or Attenuation]{style="color: blue;"}, where signal is weakened
-- [Uncongeniality]{style="color: blue;"} is when there is a mismatch between the imputation and the main model
-    * Not including outcome essentially drop association with imputed covariates
-- So [trade-off]{style="color: blue;"} between including outcome for congeniality and excluding because of temporal drift
-- Perform sensitivity analysis by including additional noise to outcome
-    * Equivalent to influence of [prior distribution]{style="color: blue;"} in Bayesian model
+![](ame_sucra_group_plot.png)
 
 ##
+
+![](ranking-table.png)
+
+## Sensitivity analyses {visibility="hidden"}
+
+-   Concern was raised that the relationship between the covariates and the health literacy outcomes may have [changed over time]{style="color: blue;"}
+
+-   So using SfL 2011 is not appropriate?
+
+-   Suggested more recent survey data PIAAC 2023
+
+    -   Missing data in PIAAC
+    -   Impute using covariate relationship in SfL 2011
+        -   Weaker assumption than with outcome
+
+-   Also fitted to SfL 2001 to see trend back in time
+
+## Covariate imputation {visibility="hidden"}
+
+-   Covariate noise introduces [Dilution or Attenuation]{style="color: blue;"}, where signal is weakened
+-   [Uncongeniality]{style="color: blue;"} is when there is a mismatch between the imputation and the main model
+    -   Not including outcome essentially drop association with imputed covariates
+-   So [trade-off]{style="color: blue;"} between including outcome for congeniality vs excluding because of temporal drift
+-   Perform sensitivity analysis by including additional noise to outcome
+    -   Equivalent to influence of [prior distribution]{style="color: blue;"} in Bayesian model
+
+## {visibility="hidden"}
 
 ![](dillution_plots.png)
 
@@ -301,9 +348,9 @@ Figure from @Hutcheonc2289
 :::
 ::::
 
-## Congeniality sensitivity in imputation
+## Congeniality sensitivity in imputation {visibility="hidden"}
 
-::: {.r-stack}
+::: r-stack
 ![](ame_forest_group_plot_piaac_imp_outcome.png){.fragment width="80%" fig-align="center"}
 
 ![](ame_forest_group_plot_piaac_imp_diluted_0.5.png){.fragment width="80%" fig-align="center"}
@@ -311,43 +358,25 @@ Figure from @Hutcheonc2289
 ![](ame_forest_group_plot_piaac_imp_diluted_1.png){.fragment width="80%" fig-align="center"}
 :::
 
-
-<!-- :::: fragment -->
-<!-- ::: callout-note -->
-<!-- ## Reference -->
-
-<!-- Green, N., Kurt, M., Moshyk, A., Larkin, J. and Baio, G. (2025), A Bayesian Hierarchical Mixture Cure Modelling Framework to Utilize Multiple Survival Datasets for Long-Term Survivorship Estimates: A Case Study From Previously Untreated Metastatic Melanoma. Statistics in Medicine, 44: e70132. https://doi.org/10.1002/sim.70132 -->
-<!-- ::: -->
-<!-- :::: -->
-
 ## Conclusions
 
-## Thanks :thankyou:
+- The job is not done with the modelling :stop:
 
-<!-- ##  -->
+- Borrow methods from other fields
 
-<!-- ::::: columns -->
+- Data issues are inevitable...deal with it
 
-<!-- ::: {.column width="50%"} -->
+- [Clear communication]{style="color: blue;"} of results for SME and decision-maker is crucial
 
-<!-- Left column content. -->
+- It's an [iterative, team effort]{style="color: blue;"} from project [inception]{style="color: blue;"} to [decision]{style="color: blue;"}
 
-<!-- ::: -->
 
-<!-- ::: {.column width="50%"} -->
+## 
 
-<!-- Right column content. -->
+# Thanks :thankyou:
 
-<!-- ::: -->
-
-<!-- ::::: -->
-
-<!-- ## Map from one model to the next -->
-
-<!-- ``` {.r code-line-numbers="|6|11"} -->
-
-<!-- code -->
-
-<!-- ``` -->
 
 ## References
+
+<!-- install.packages("pagedown") -->
+<!-- pagedown::chrome_print("myslides.html") -->
